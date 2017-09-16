@@ -1,0 +1,15 @@
+.Profile {
+
+}
+
+.Profile .profile-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.Profile .edit-profile {
+  margin-top: 16px;
+}

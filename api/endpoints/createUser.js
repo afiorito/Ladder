@@ -1,6 +1,5 @@
-import uuid from 'uuid';
-import * as dynamoDbLib from './helpers/dynamodb-helper';
-import { success, failure } from './helpers/response-helper';
+import * as dynamoDbLib from '../helpers/dynamodb-helper';
+import { success, failure } from '../helpers/response-helper';
 
 export async function main(event, context, callback) {
   const data = JSON.parse(event.body);
@@ -13,7 +12,6 @@ export async function main(event, context, callback) {
       email: data.email,
       totalRating: 0,
       ratingCount: 0,
-      averageRating: 0,
       createdAt: new Date().getTime()
     },
   };

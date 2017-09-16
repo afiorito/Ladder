@@ -7,7 +7,7 @@ import {
   AuthenticationDetails,
   CognitoUser
 } from "amazon-cognito-identity-js";
-import { getUserId } from "../libs/aws-lib";
+import { getUserId, invokeApig } from "../libs/aws-lib";
 import "./Login.css";
 
 
@@ -39,8 +39,11 @@ export default class Login extends Component {
   
     try {
       await this.login(this.state.email, this.state.password);
-      const userId = await getUserId();
-      this.props.userHasAuthenticated(userId);
+      let userId = await getUserId();
+      console.log(userId);
+      const user = await this.getUser(userId);
+      console.log(user);
+      this.props.userHasAuthenticated(user);
       this.props.history.push("/");
     } catch (e) {
       alert(e);
@@ -63,6 +66,12 @@ export default class Login extends Component {
         onFailure: err => reject(err)
       })
     );
+  }
+
+  getUser = async userId => {
+    return invokeApig({
+      path: `/user/${userId}`
+    });
   }
 
   render() {

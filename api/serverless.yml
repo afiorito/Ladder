@@ -34,10 +34,26 @@ functions:
   #     domain api call
   # - authorizer: authenticate using the AWS IAM role
   createUser:
-    handler: createUser.main
+    handler: endpoints/createUser.main
     events:
       - http:
           path: user/createnew
           method: post
+          cors: true
+          authorizer: aws_iam
+  getUser:
+    handler: endpoints/getUser.main
+    events:
+      - http:
+          path: user/{id}
+          method: get
+          cors: true
+          authorizer: aws_iam
+  updateUser:
+    handler: endpoints/updateUser.main
+    events:
+      - http:
+          path: user/{id}
+          method: put
           cors: true
           authorizer: aws_iam

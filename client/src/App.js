@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { authUser, signOutUser } from "./libs/aws-lib";
+import { authUser, invokeApig, signOutUser } from "./libs/aws-lib";
 import { Link, withRouter } from "react-router-dom";
 import { Nav, NavItem, Navbar } from "react-bootstrap";
 import RouteNavItem from "./components/RouteNavItem";
@@ -11,14 +11,20 @@ class App extends Component {
     super(props);
   
     this.state = {
-      isAuthenticated: false
+      isAuthenticating: true,
+      user: false
     };
   }
 
   async componentDidMount() {
     try {
       let userId = await authUser();
-      this.userHasAuthenticated(userId);
+      if(userId) {
+        let user = await invokeApig({ path: `/user/${userId}` });
+        this.userHasAuthenticated(user);
+      } else {
+        this.userHasAuthenticated(null);
+      }
     }
     catch(e) {
       alert(e);
@@ -27,8 +33,8 @@ class App extends Component {
     this.setState({ isAuthenticating: false });
   }
   
-  userHasAuthenticated = authenticated => {
-    this.setState({ isAuthenticated: authenticated });
+  userHasAuthenticated = user => {
+    this.setState({ user: user });
   }
 
   handleLogout = event => {
@@ -40,7 +46,7 @@ class App extends Component {
 
   render() {
     const childProps = {
-      isAuthenticated: this.state.isAuthenticated,
+      user: this.state.user,
       userHasAuthenticated: this.userHasAuthenticated
     };
   
@@ -56,13 +62,20 @@ class App extends Component {
           </Navbar.Header>
           <Navbar.Collapse>
             <Nav pullRight>
-              {this.state.isAuthenticated
-                ? <NavItem onClick={this.handleLogout}>Logout</NavItem>
-                : [
-                    <RouteNavItem key={1} href="/signup">
+              {this.state.user
+                ? [
+                  <RouteNavItem key={1} href="/">
+                    Posts
+                  </RouteNavItem>,
+                  <RouteNavItem key={2} href={`/profile/${this.state.user.userId}`}>
+                    Profile
+                  </RouteNavItem>, 
+                  <NavItem key={3} onClick={this.handleLogout}>Logout</NavItem>
+                ] : [
+                    <RouteNavItem key={2} href="/signup">
                       Signup
                     </RouteNavItem>,
-                    <RouteNavItem key={2} href="/login">
+                    <RouteNavItem key={3} href="/login">
                       Login
                     </RouteNavItem>
                   ]}

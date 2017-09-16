@@ -2,13 +2,16 @@ var glob = require('glob');
 var path = require('path');
 var nodeExternals = require('webpack-node-externals');
 
+
 // Required for Create React App Babel transform
 process.env.NODE_ENV = 'production';
+
+const slsw = require('serverless-webpack');
 
 module.exports = {
   // Use all js files in project root (except
   // the webpack config) as an entry
-  entry: globEntries('!(webpack.config).js'),
+  entry: globEntries(["!(webpack.config).js", "./endpoints/*"]),
   target: 'node',
   // Since 'aws-sdk' is not compatible with webpack,
   // we exclude all node dependencies
@@ -27,18 +30,19 @@ module.exports = {
   output: {
     libraryTarget: 'commonjs',
     path: path.join(__dirname, '.webpack'),
-    filename: '[name].js'
+    filename: 'endpoints/[name].js'
   },
 };
 
-function globEntries(globPath) {
-  var files = glob.sync(globPath);
+function globEntries(globPaths) {
   var entries = {};
 
-  for (var i = 0; i < files.length; i++) {
-    var entry = files[i];
-    entries[path.basename(entry, path.extname(entry))] = './' + entry;
-  }
-
+  globPaths.forEach(globPath => {
+    var files = glob.sync(globPath);
+    for (var i = 0; i < files.length; i++) {
+      var entry = files[i];
+      entries[path.basename(entry, path.extname(entry))] = './' + entry;
+    }
+  });
   return entries;
 }

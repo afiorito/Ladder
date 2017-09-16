@@ -67,6 +67,47 @@ export async function invokeApig({
   return results.json();
 }
 
+export async function s3Upload(file) {
+  if (!await authUser()) {
+    throw new Error("User is not logged in");
+  }
+
+  const s3 = new AWS.S3({
+    params: {
+      Bucket: config.s3.BUCKET
+    }
+  });
+  const userId = await getUserId();
+  const filename = `${userId}-${Date.now()}-${file.name}`;
+
+  return s3
+    .upload({
+      Key: filename,
+      Body: file,
+      ContentType: file.type,
+      ACL: "public-read"
+    })
+    .promise();
+}
+
+export async function s3Delete(filename) {
+  if (!await authUser()) {
+    throw new Error("User is not logged in");
+  }
+
+  const s3 = new AWS.S3({
+    params: {
+      Bucket: config.s3.BUCKET
+    }
+  });
+
+  return s3
+    .deleteObject({
+      Key: filename
+    })
+    .promise();
+}
+
 export async function getUserId() {
   return new Promise((resolve, reject) => {
     getAttributes((err, attributes) => {

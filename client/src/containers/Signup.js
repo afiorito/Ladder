@@ -77,14 +77,15 @@ export default class Signup extends Component {
         this.state.email,
         this.state.password
       );
+      
       let userId = await getUserId();
-      this.props.userHasAuthenticated(userId);
-      console.log(userId, this.state.name, this.state.email);
       await this.createUser({
         userId: userId, 
         name: this.state.name, 
         email: this.state.email
       });
+
+      this.props.userHasAuthenticated({userId: userId, name: this.state.name});
       this.props.history.push("/");
     } catch (e) {
       alert(e);
