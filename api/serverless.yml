@@ -57,3 +57,19 @@ functions:
           method: put
           cors: true
           authorizer: aws_iam
+  createPost:
+    handler: endpoints/createPost.main
+    events:
+      - http:
+          path: post/createnew
+          method: post
+          cors: true
+          authorizer: aws_iam
+  getLocalPosts:
+    handler: endpoints/getLocalPosts.main
+    events:
+      - http:
+          path: posts
+          method: get
+          cors: true
+          authorizer: aws_iam

@@ -1,0 +1,7 @@
+.NewPost form {
+  padding-bottom: 15px;
+}
+
+.NewPost form textarea {
+  height: 300px;
+}
