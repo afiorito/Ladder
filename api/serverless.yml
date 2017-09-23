@@ -73,3 +73,16 @@ functions:
           method: get
           cors: true
           authorizer: aws_iam
+  getPosts:
+    handler: endpoints/getPosts.main
+    events:
+      - http:
+          path: posts/{userId}/{postId}
+          method: get
+          cors: true
+          authorizer: aws_iam
+      - http:
+          path: posts/{userId}
+          method: get
+          cors: true
+          authorizer: aws_iam

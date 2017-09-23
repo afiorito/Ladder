@@ -1,0 +1,25 @@
+.LocalPosts header {
+  border-bottom: 1px solid #eee;
+}
+
+.LocalPosts header h1 {
+  display: inline-block;
+  margin: 0; 
+  padding-bottom: 8px
+}
+
+.LocalPosts header .top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.LocalPosts header .btn {
+  margin: 8px 8px 8px 16px;
+  align-self: flex-start;
+}
+
+@media all and (max-width: 480px) {
+  .LocalPosts header h1 {
+    font-size: 1.8em;
+  }
+}

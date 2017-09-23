@@ -1,0 +1,23 @@
+.PostTable tr td {
+  font-size: 1.1em;
+}
+
+.PostTable .post-row {
+  cursor: pointer;
+}
+
+.PostTable tr .domain {
+  color: #777;
+}
+
+.PostTable .list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.PostTable .list-item p {
+  font-size: 1em;
+  margin: 0;
+  line-height: 25px;
+}

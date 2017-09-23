@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Lander from '../components/Lander';
-import Posts from './Posts';
+import Posts from './LocalPosts';
 import "./Home.css";
 
 export default class Home extends Component {

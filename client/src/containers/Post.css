@@ -1,0 +1,39 @@
+.Post .user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 20px;
+}
+
+.Post .user-info img {
+  width: 50%;
+  height: 50%;
+  border-radius: 50%;
+}
+
+.Post .user-info .actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.Post .user-info .actions > * {
+  margin: 4px;
+}
+
+.Post .post-info .title h1, .Post .post-info .title {
+  margin-top: 0px;
+}
+
+.Post .post-info p {
+  font-size: 1.5em;
+  margin-bottom: 16px;
+}
+
+.Post .post-info h2 {
+  color: #666;
+  font-size: 1em;
+  font-weight: 300;
+  margin-bottom: 0px;
+}

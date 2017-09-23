@@ -16,7 +16,6 @@ function TableManager(dynamodb = new AWS.DynamoDB()) {
   const config = new ddbGeo.GeoDataManagerConfiguration(ddb, 'posts');
   config.rangeKeyAttributeName = "postId";
   config.hashKeyLength = 3;
-  config.userIndexName = "user-index";
   config.postIndexName = "post-index";
 
   const tableManager = new ddbGeo.GeoDataManager(config);
@@ -29,23 +28,3 @@ function TableManager(dynamodb = new AWS.DynamoDB()) {
 }
 
 export default TableManager;
-
-// const ddb = new AWS.DynamoDB();
-
-// // Configuration for a new instance of a GeoDataManager. Each GeoDataManager instance represents a table
-// const config = new ddbGeo.GeoDataManagerConfiguration(ddb, 'posts');
-// config.rangeKeyAttributeName = "postId";
-// config.hashKeyLength = 3;
-// config.userIndexName = "user-index";
-// config.postIndexName = "post-index";
-
-// // Instantiate the table manager
-// const tableManager = new ddbGeo.GeoDataManager(config);
-
-// ddbGeo.GeoDataManager.prototype.createTable = createTableInput => {
-//   return ddb.createTable(createTableInput).promise();
-// }
-
-// ddbGeo.GeoDataManager.prototype.ddb = ddb;
-
-// export default tableManager;

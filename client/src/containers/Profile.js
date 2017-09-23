@@ -3,6 +3,7 @@ import StarRating from '../components/StarRating';
 import { getUserId, invokeApig, s3Upload, s3Delete } from "../libs/aws-lib";
 import LoadingButton from '../components/LoadingButton';
 import ProfileImage from '../components/ProfileImage';
+import PostTable from '../components/PostTable';
 import './Profile.css';
 
 class Profile extends Component {
@@ -11,6 +12,7 @@ class Profile extends Component {
 
     this.state = {
       user: null,
+      posts: [],
       isEditing: false,
       imageDidChange: false,
       isSaving: false
@@ -21,26 +23,39 @@ class Profile extends Component {
 
   async componentDidMount() {
     let userId = await getUserId();
-    // let user = await invokeApig({ path: `/user/${userId}` });
+    // let user = await this.getUser(userId);
     // this.setState({ user: user });
-    // console.log(user);
-    this.setState({ user: {name: "Anthony", userId, profileImage: null, createdAt: new Date().getTime(), totalRating: 13, ratingCount: 4 } });
+
+    // let posts = await this.getPosts(userId);
+    let posts = [
+      {
+        postId: "141232332",
+        title: "Offering Wedding Photography", 
+        domain: "Photography", 
+        price: 5.99,
+        user: {
+          userId: "USERID",
+          totalRating: 10,
+          ratingCount: 2
+        }
+      }
+    ];
+    let user = {name: "Anthony", userId, profileImage: null, createdAt: new Date().getTime(), totalRating: 13, ratingCount: 4 };
+
+    this.setState({ user: user, posts: posts});
   }
 
   toggleEditing = async () => {
     if (this.state.imageDidChange) {
       // save edits & stop editing
       try {
-        console.log("In");
         const image = this.image;
         if(this.state.user.profileImage) {
-          console.log("delete");
           const regex = new RegExp(this.state.user.userId + ".+");
           const filename = this.state.user.profileImage.match(regex)[0];
           await s3Delete(filename);
         }
         let uploadFilename = (await s3Upload(image)).Location;
-        console.log(uploadFilename, this.props.match.params.id);
 
         await this.saveUser({ profileImage: uploadFilename });
       } catch (e) {
@@ -50,6 +65,18 @@ class Profile extends Component {
     }
     this.image = null;
     this.setState({isEditing: !this.state.isEditing, imageDidChange: false });
+  }
+
+  getPosts(userId) {
+    return invokeApig({
+      path: `/posts/${userId}`
+    });
+  }
+
+  getUser(userId) {
+    return invokeApig({ 
+      path: `/user/${userId}` 
+    });
   }
 
   saveUser(update) {
@@ -94,6 +121,13 @@ class Profile extends Component {
           />
         </div>
         <h2>Your Posts</h2>
+        <PostTable
+          posts={this.state.posts}
+          headings={["Title", "Domain", "Price"]}
+          user={this.state.user}
+          striped
+          responsive
+        />
       </div>
     );
   }
