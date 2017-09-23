@@ -37,6 +37,10 @@ class App extends Component {
     this.setState({ user: user });
   }
 
+  isCurrentUser = user => {
+    return this.state.user.userId !== user.userId;
+  }
+
   handleLogout = event => {
     signOutUser();
 
@@ -47,7 +51,8 @@ class App extends Component {
   render() {
     const childProps = {
       user: this.state.user,
-      userHasAuthenticated: this.userHasAuthenticated
+      userHasAuthenticated: this.userHasAuthenticated,
+      isCurrentUser: this.isCurrentUser
     };
   
     return (

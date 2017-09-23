@@ -86,3 +86,11 @@ functions:
           method: get
           cors: true
           authorizer: aws_iam
+  sendEmail:
+    handler: endpoints/sendEmail.main
+    events:
+      - http:
+          path: email
+          method: post
+          cors: true
+          authorizer: aws_iam

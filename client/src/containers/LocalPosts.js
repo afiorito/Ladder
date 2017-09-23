@@ -18,27 +18,27 @@ class LocalPosts extends Component {
   }
 
   async componentDidMount() {
-    // try {
-    //   const coords = await getCurrentPosition();
-    //   const posts = await this.getLocalPosts(coords);
-    //   this.setState({ isSearchingForLocation: false, coords: coords, posts: posts });
-    // } catch (e) {
-    //   alert(e.message);
-    //   this.setState({ isSearchingForLocation: null });
-    // }
-    this.setState({ posts: [
-      {
-        postId: "141232332",
-        title: "Offering Wedding Photography", 
-        domain: "Photography", 
-        price: 5.99,
-        user: {
-          userId: "USERID",
-          totalRating: 10,
-          ratingCount: 2
-        }
-      }
-    ]});
+    try {
+      const coords = await getCurrentPosition();
+      const posts = await this.getLocalPosts(coords);
+      this.setState({ isSearchingForLocation: false, coords: coords, posts: posts });
+    } catch (e) {
+      alert(e.message);
+      this.setState({ isSearchingForLocation: null });
+    }
+    // this.setState({ posts: [
+    //   {
+    //     postId: "141232332",
+    //     title: "Offering Wedding Photography", 
+    //     domain: "Photography", 
+    //     price: 5.99,
+    //     user: {
+    //       userId: "USERID",
+    //       totalRating: 10,
+    //       ratingCount: 2
+    //     }
+    //   }
+    // ]});
   }
 
   getLocalPosts({latitude, longitude}) {

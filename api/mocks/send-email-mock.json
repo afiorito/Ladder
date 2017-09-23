@@ -1,0 +1,3 @@
+{
+  "body": "{\"senderId\":\"user1\",\"receiverId\":\"user2\",\"subject\":\"API EMAIL\",\"body\":\"This is the email body\"}"
+}

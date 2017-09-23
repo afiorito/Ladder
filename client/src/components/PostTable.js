@@ -23,6 +23,8 @@ class PostTable extends Component {
           value={post.user.totalRating / post.user.ratingCount}
           edit={false}
         />;
+      default: 
+        return "Error";
     }
   }
 
@@ -58,7 +60,7 @@ class PostTable extends Component {
     if (this.props.user) {
       userId = this.props.user.userId;
     } else {
-      let userId = post.user.userId;
+      userId = post.user.userId;
     }
       this.props.history.push(`/post/${postId}/${userId}`);
   }
