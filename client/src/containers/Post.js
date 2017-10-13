@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Col, PageHeader, Button } from 'react-bootstrap';
 import StarRating from '../components/StarRating';
+import { reverseGeocode } from '../libs/geo-parser';
 import { invokeApig } from '../libs/aws-lib';
 import { formatPrice } from '../helpers/price-helper';
 import EmailModal from '../components/EmailModal';
@@ -19,9 +20,14 @@ class Post extends Component {
 
   async componentDidMount() {
     let post = await this.getPost(this.props.match.params);
-    if (post) {
+    if (post.title) {
       post.geoJson = JSON.parse(post.geoJson);
-      this.setState({ post: post, isLoading: false });
+      const coords = {latitude: post.geoJson.coordinates[1], longitude: post.geoJson.coordinates[0]};
+      post.location = await reverseGeocode(coords);
+      this.setState({ post, isLoading: false });
+    } else {
+      // TODO: show post not found instead of this
+      this.props.history.push('/post');
     }
     // this.setState({ post: {
     //   title: 'Offering Wedding Photography',
@@ -87,7 +93,7 @@ class Post extends Component {
 export default Post;
 
 
-const UserInfo = ({ title, description, domain, price, geoJson }) => (
+const UserInfo = ({ title, location, description, domain, price, geoJson }) => (
   <Col md={8} xs={12} className="post-info col-md-push-4">
     <h2>TITLE</h2>
     <PageHeader className="title">{title}</PageHeader>
@@ -98,13 +104,13 @@ const UserInfo = ({ title, description, domain, price, geoJson }) => (
     <h2>PRICE</h2>
     <p className="price">{formatPrice(price)}</p>
     <h2>LOCATION</h2>
-    <p className="location">{geoJson.coordinates.join(", ")}</p>
+    <p className="location">{location}</p>
   </Col>
 );
 
 const PostInfo = ({ user, price , ...props}) => (
   <Col md={4} xs={12} className="user-info col-md-pull-8">
-    <img src={user.profileImage} alt="Profile Avatar" />
+    <img src={user.profileImage || '/assets/profile-avatar.svg'} alt="Profile Avatar" />
     <h3>{user.name}</h3>
     <StarRating
       count={5}

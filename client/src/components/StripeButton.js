@@ -1,17 +1,21 @@
 import React from "react";
-import { Button } from 'react-bootstrap';
+import LoadingButton from './LoadingButton';
 import config from '../config';
 import './StripeButton.css';
 
-export default props => {
+export default ({ isProcessing }) => {
   let { response_type, client_id, scope } = config.stripe;
   return (
-    <Button
+    <LoadingButton
       className="StripeButton"
       block
       bsSize="large"
-      href={`https://connect.stripe.com/oauth/authorize?response_type=${response_type}&client_id=${client_id}&scope=${scope}`}>
+      href={`https://connect.stripe.com/oauth/authorize?response_type=${response_type}&client_id=${client_id}&scope=${scope}`}
+      isLoading={isProcessing}
+      text="Connect with Stripe"
+      loadingText="Processing..."
+    >
       Connect with Stripe
-    </Button>
+    </LoadingButton>
   );
 };

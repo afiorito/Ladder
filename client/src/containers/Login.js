@@ -43,7 +43,6 @@ export default class Login extends Component {
       const user = await this.getUser(userId);
       
       this.props.userHasAuthenticated(user);
-      this.props.history.push("/");
     } catch (e) {
       alert(e);
       this.setState({ isLoading: false });

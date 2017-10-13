@@ -1,7 +1,8 @@
 import * as dynamoDbLib from '../helpers/dynamodb-helper';
 import { success, failure } from '../helpers/response-helper';
 
-function generateUpdateExpression(attributes, update) {
+export function generateUpdateExpression(update) {
+  const attributes = ["name", "totalRating", "ratingCount", "stripeId", "profileImage"];
   let columns = [];
   let ExpressionAttributeValues = attributes
     .reduce((attributes, key) => {
@@ -19,9 +20,7 @@ function generateUpdateExpression(attributes, update) {
 export async function main(event, context, callback) {
   const data = JSON.parse(event.body);
 
-  let { UpdateExpression, ExpressionAttributeValues } = generateUpdateExpression([
-    "name", "totalRating", "ratingCount", "stripeId", "profileImage"
-  ], data);
+  let { UpdateExpression, ExpressionAttributeValues } = generateUpdateExpression(data);
 
   const params = {
     TableName: 'users',

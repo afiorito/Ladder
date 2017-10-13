@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
 import PostTable from '../components/PostTable';
-import { getCurrentPosition } from '../libs/geo-parser';
+import { getCurrentPosition, reverseGeocode } from '../libs/geo-parser';
 import { invokeApig } from '../libs/aws-lib';
 import "./LocalPosts.css";
 
@@ -20,8 +20,10 @@ class LocalPosts extends Component {
   async componentDidMount() {
     try {
       const coords = await getCurrentPosition();
-      const posts = await this.getLocalPosts(coords);
-      this.setState({ isSearchingForLocation: false, coords: coords, posts: posts });
+      const data = [reverseGeocode(coords), this.getLocalPosts(coords)];
+
+      const [ location, posts ] = await Promise.all(data); 
+      this.setState({ isSearchingForLocation: false, coords, posts, location });
     } catch (e) {
       alert(e.message);
       this.setState({ isSearchingForLocation: null });
@@ -73,7 +75,7 @@ class LocalPosts extends Component {
               Add New Post
             </Button>
           </div>
-          {this.state.coords && <p>{`Near ${this.state.coords.latitude}, ${this.state.coords.longitude}`}</p>}
+          {this.state.coords && <p>{`Near ${this.state.location}`}</p>}
         </header>
         <PostTable
           posts={this.state.posts}

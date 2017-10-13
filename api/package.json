@@ -34,6 +34,7 @@
     "dynamodb-geo": "^0.3.1",
     "dynamodb-marshaler": "^2.0.0",
     "lodash": "^4.17.4",
+    "request": "^2.82.0",
     "uuid": "^3.1.0"
   }
 }

@@ -34,7 +34,7 @@ export async function main(event, context, callback) {
               userId: userId
             }
           });
-          result.user = pick(user.Item, ...["userId", "name", "totalRating", "ratingCount", "profileImage"]);
+          result.user = pick(user.Item, ...["userId", "stripeId", "name", "totalRating", "ratingCount", "profileImage"]);
 
           return pick(result, keys);
         } else {
@@ -42,10 +42,10 @@ export async function main(event, context, callback) {
         }
       }));
 
-      if (response.length > 1) {
-        response = orderBy(response, 'createdAt', 'desc');
-      } else {
+      if (postId) {
         response = response[0];
+      } else {
+        response = orderBy(response, 'createdAt', 'desc');
       }
     }
     

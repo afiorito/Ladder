@@ -1,6 +1,6 @@
 {
   "body": "{\"profileImage\":\"hello.jpg\", \"totalRating\":\"50\"}",
   "pathParameters": {
-    "id": "USERID"
+    "id": "user1"
   }
 }

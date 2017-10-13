@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
+import StripeAuthenticated from '../components/StripeAuthenticatedRoute';
 import { Col, FormGroup, FormControl, ControlLabel, InputGroup } from 'react-bootstrap';
 import LoadingButton from '../components/LoadingButton';
 import { invokeApig } from "../libs/aws-lib";
-import { getCurrentPosition, displayLocationError } from '../libs/geo-parser';
-import config from "../config";
+import { getCurrentPosition, reverseGeocode, displayLocationError } from '../libs/geo-parser';
 import "./NewPost.css";
 
 class NewPost extends Component {
@@ -27,7 +27,9 @@ class NewPost extends Component {
     try {
       this.setState({ isSearchingForLocation: true });
       const coords = await getCurrentPosition();
-      this.setState({ isSearchingForLocation: false, coords: coords })
+      const location = await reverseGeocode(coords);
+      this.setState({ isSearchingForLocation: false, coords, location })
+
     } catch (e) {
       alert(displayLocationError(e));
       this.setState({ isSearchingForLocation: null });
@@ -73,7 +75,6 @@ class NewPost extends Component {
   }
   
   createPost(post) {
-    console.log(post);
     return invokeApig({
       path: '/post/createnew',
       method: "POST",
@@ -85,25 +86,8 @@ class NewPost extends Component {
     if(this.state.isSearchingForLocation) {
       return "Searching for location...";
     } else {
-      if(this.state.isSearchingForLocation === null) {
-        return "Location must be enabled to allow posting.";
-      }
-      let { latitude, longitude } = this.state.coords;
-      let latlng = `${latitude}, ${longitude}`;
-      
-      return latlng;
+      return this.state.location;
     }
-  }
-
-  getLocation = async latlng => {
-    try {
-      let response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latlng}&key=${config.googleMaps.apiKey}`);
-      let json = await response.json();
-      return json.results;
-    } catch (e) {
-      alert(e);
-    }
-
   }
 
   render() {
@@ -174,4 +158,4 @@ class NewPost extends Component {
   }
 }
 
-export default NewPost;
+export default StripeAuthenticated(NewPost);

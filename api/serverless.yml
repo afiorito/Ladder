@@ -94,3 +94,11 @@ functions:
           method: post
           cors: true
           authorizer: aws_iam
+  stripeAuth:
+    handler: endpoints/stripeAuth.main
+    events:
+      - http:
+          path: stripe/{id}
+          method: put
+          cors: true
+          authorizer: aws_iam

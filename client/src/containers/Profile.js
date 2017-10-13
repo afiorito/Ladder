@@ -15,7 +15,8 @@ class Profile extends Component {
       posts: [],
       isEditing: false,
       imageDidChange: false,
-      isSaving: false
+      isSaving: false,
+      isPostsLoading: false
     };
 
     this.image = null;
@@ -23,24 +24,26 @@ class Profile extends Component {
 
   async componentDidMount() {
     let userId = await getUserId();
-    // let user = await this.getUser(userId);
-    // this.setState({ user: user });
+    let user = await this.getUser(userId);
+    this.setState({ user: user });
 
-    // let posts = await this.getPosts(userId);
-    let posts = [
-      {
-        postId: "141232332",
-        title: "Offering Wedding Photography", 
-        domain: "Photography", 
-        price: 5.99,
-        user: {
-          userId: "USERID",
-          totalRating: 10,
-          ratingCount: 2
-        }
-      }
-    ];
-    let user = {name: "Anthony", userId, profileImage: null, createdAt: new Date().getTime(), totalRating: 13, ratingCount: 4 };
+    this.setState({ isPostsLoading: true });
+    let posts = await this.getPosts(userId);
+    this.setState({ isPostsLoading: false });
+    // let posts = [
+    //   {
+    //     postId: "141232332",
+    //     title: "Offering Wedding Photography", 
+    //     domain: "Photography", 
+    //     price: 5.99,
+    //     user: {
+    //       userId: "USERID",
+    //       totalRating: 10,
+    //       ratingCount: 2
+    //     }
+    //   }
+    // ];
+    // let user = {name: "Anthony", userId, profileImage: null, createdAt: new Date().getTime(), totalRating: 13, ratingCount: 4 };
 
     this.setState({ user: user, posts: posts});
   }
@@ -82,7 +85,7 @@ class Profile extends Component {
   saveUser(update) {
     return invokeApig({
       path: `/user/${this.props.match.params.id}`,
-      method: "PUT",
+      method: 'PUT',
       body: update
     });
   }
@@ -125,6 +128,7 @@ class Profile extends Component {
           posts={this.state.posts}
           headings={["Title", "Domain", "Price"]}
           user={this.state.user}
+          loadingPosts={this.state.isPostsLoading}
           striped
           responsive
         />

@@ -29,7 +29,6 @@ class PostTable extends Component {
   }
 
   renderPosts(posts, headings, onSelectCell) {
-
     return posts.map(post => {
       return (
         <tr 
@@ -74,6 +73,7 @@ class PostTable extends Component {
       onSelectCell 
     } = this.props;
     return (
+      <div>
       <Table className="PostTable" responsive={responsive} striped={striped}>
         <thead>
           <tr>
@@ -84,6 +84,8 @@ class PostTable extends Component {
           {this.renderPosts(posts, headings, onSelectCell)}
         </tbody>
       </Table>
+      {this.props.loadingPosts && <div className="center">Loading...</div>}
+      </div>
     ); 
   }
 }
