@@ -13,7 +13,8 @@ class LocalPosts extends Component {
       posts: [],
       location: null,
       coords: null,
-      isSearchingForLocation: true
+      isSearchingForLocation: true,
+      sortASC: false
     };
   }
 
@@ -59,6 +60,35 @@ class LocalPosts extends Component {
     }
   }
 
+  sortPosts = (sortBy) => {
+    let sorted = this.state.posts.slice();
+    const asc = !this.state.sortASC;
+    
+    switch (sortBy) {
+      case 'Title':
+      case 'Domain':
+      case 'Price':
+        sorted.sort((a, b) => {
+          const key = sortBy.toLowerCase();
+          return asc ? a[key] > b[key] : a[key] < b[key];
+        });
+        break;
+      case 'User Rating':
+        sorted.sort((a, b) => {
+          return asc ? a.user.rating > b.user.rating : a.user.rating < b.user.rating;
+        });
+        break;
+      default:
+        break;
+    }
+
+    this.setState({ posts: sorted, sortASC: asc });
+  }
+
+  sort(a, b, by) {
+    return this.state.sortASC ? b[by] > a[by] : b[by] < a[by];
+  }
+
   render() {
     return (
       <div className="LocalPosts">
@@ -78,6 +108,7 @@ class LocalPosts extends Component {
         <PostTable
           posts={this.state.posts}
           headings={["Title", "Domain", "Price", "User Rating"]}
+          sortPosts={this.sortPosts}
           striped
           responsive
         />

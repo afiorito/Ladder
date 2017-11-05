@@ -49,7 +49,7 @@ class PostTable extends Component {
 
   renderTableHead(headings) {
       return headings.map(heading => {
-        return <th key={heading}>{heading}</th>;
+        return <th onClick={this.props.sortPosts.bind(null, heading)} key={heading}>{heading}</th>;
       });
   }
 

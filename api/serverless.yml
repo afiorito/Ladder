@@ -102,6 +102,14 @@ functions:
           method: get
           cors: true
           authorizer: aws_iam
+  getTransactions:
+    handler: endpoints/getTransactions.main
+    events:
+      - http:
+          path: transactions/{userId}
+          method: get
+          cors: true
+          authorizer: aws_iam
   sendEmail:
     handler: endpoints/sendEmail.main
     events:

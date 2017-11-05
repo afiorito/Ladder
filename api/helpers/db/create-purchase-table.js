@@ -49,6 +49,20 @@ const params = {
         ReadCapacityUnits: 5,
         WriteCapacityUnits: 5
       }
+    },
+    {
+      IndexName: 'customer_index',
+      KeySchema: [{
+        AttributeName: "customerId",
+        KeyType: 'HASH'
+      }],
+      Projection: {
+          ProjectionType: 'ALL',
+      },
+      ProvisionedThroughput: {
+        ReadCapacityUnits: 5,
+        WriteCapacityUnits: 5
+      }
     }
   ],
   ProvisionedThroughput: {

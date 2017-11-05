@@ -12,7 +12,6 @@ export async function main(event, context, callback) {
   } catch (e) {
     callback(null, failure({status: e}));
   }
-
 }
 
 function getPurchasesForCustomerOnPost(customerId, postId) {

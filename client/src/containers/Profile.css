@@ -1,5 +1,13 @@
 .Profile {
+}
 
+.Profile li.list-group-item {
+  display: flex;
+  justify-content: space-around;
+}
+
+.Profile .center {
+  padding-bottom: 16px;
 }
 
 .Profile .profile-header {

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import StarRating from '../components/StarRating';
-import { getUserId, invokeApig, s3Upload, s3Delete } from "../libs/aws-lib";
+import { invokeApig, s3Upload, s3Delete } from "../libs/aws-lib";
 import LoadingButton from '../components/LoadingButton';
 import ProfileImage from '../components/ProfileImage';
 import PostTable from '../components/PostTable';
+import { Col, ListGroup, ListGroupItem, PageHeader } from 'react-bootstrap';
 import './Profile.css';
 
 class Profile extends Component {
@@ -23,12 +24,12 @@ class Profile extends Component {
   }
 
   async componentDidMount() {
-    let userId = await getUserId();
-    let user = await this.getUser(userId);
-    this.setState({ user: user });
+    let user = await this.getUser(this.props.match.params.id);
+    let transactions = await this.getTransactions(user.userId);
+    this.setState({ user, transactions });
 
     this.setState({ isPostsLoading: true });
-    let posts = await this.getPosts(userId);
+    let posts = await this.getPosts(user.userId);
     this.setState({ isPostsLoading: false });
     // let posts = [
     //   {
@@ -93,11 +94,17 @@ class Profile extends Component {
     this.setState({ imageDidChange: true})
   }
 
+  getTransactions = (userId) => {
+    return invokeApig({
+      path: `/transactions/${userId}`
+    });
+  }
+
   render() {
     return (
       this.state.user && 
       <div className="Profile">
-        <div className="profile-header">
+        <Col md={4} xs={12} className="profile-header">
           <ProfileImage
             imgURL={this.state.user.profileImage ? this.state.user.profileImage : '/assets/profile-avatar.svg'}
             alt="Profile Image"
@@ -120,16 +127,57 @@ class Profile extends Component {
             loadingText="Saving..."
             isLoading={this.state.isSaving}
           />
-        </div>
-        <h2>Your Posts</h2>
-        <PostTable
-          posts={this.state.posts}
-          headings={["Title", "Domain", "Price"]}
-          user={this.state.user}
-          loadingPosts={this.state.isPostsLoading}
-          striped
-          responsive
-        />
+        </Col>
+        <Col md={8} xs={12}>
+          <PageHeader>Your Posts</PageHeader>
+          <PostTable
+            posts={this.state.posts}
+            headings={["Title", "Domain", "Price"]}
+            user={this.state.user}
+            loadingPosts={this.state.isPostsLoading}
+            sortPosts={() => {}}
+            striped
+            responsive
+          />
+        </Col>
+        <Col xs={12}>
+          <PageHeader>Your Sales</PageHeader>
+          { this.state.transactions.sales.length > 0 ?
+          <ListGroup>
+            {this.state.transactions.sales.map(s => 
+              <ListGroupItem key={s.purchaseId}>
+                {new Date(s.createdAt).toDateString()}
+                <span>Received: ${s.price}</span>
+                <StarRating 
+                  count={5}
+                  color1="#333"
+                  size={16}
+                  value={s.rating}
+                  edit={false}
+                />
+              </ListGroupItem>
+            )}
+          </ListGroup> : <div className="center">You have no sales</div>}
+        </Col>
+        <Col xs={12}>
+          <PageHeader>Your Purchases</PageHeader>
+          { this.state.transactions.purchases.length > 0 ?
+          <ListGroup>
+            {this.state.transactions.purchases.map(p => 
+              <ListGroupItem key={p.purchaseId}>
+                {new Date(p.createdAt).toDateString()}
+                <span>Payed: ${p.price}</span>
+                <StarRating 
+                  count={5}
+                  color1="#333"
+                  size={16}
+                  value={p.rating}
+                  edit={false}
+                />
+              </ListGroupItem>
+            )}
+          </ListGroup> : <div className="center">You have no purchases</div>}
+        </Col>
       </div>
     );
   }
