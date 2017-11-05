@@ -5,3 +5,15 @@
 .NewPost form textarea {
   height: 300px;
 }
+
+
+
+.NewPost .add-image, .NewPost img {
+  width: 100px;
+  height: 100px;
+}
+
+.NewPost .image-input {
+  height: 0;
+  width: 0;
+}

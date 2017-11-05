@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import StripeAuthenticated from '../components/StripeAuthenticatedRoute';
-import { Col, FormGroup, FormControl, ControlLabel, InputGroup } from 'react-bootstrap';
+import { Col, FormGroup, FormControl, ControlLabel, InputGroup, Image, Button } from 'react-bootstrap';
 import LoadingButton from '../components/LoadingButton';
 import { invokeApig } from "../libs/aws-lib";
 import { getCurrentPosition, reverseGeocode, displayLocationError } from '../libs/geo-parser';
@@ -9,7 +9,6 @@ import "./NewPost.css";
 class NewPost extends Component {
   constructor(props) {
     super(props);
-    console.log(props);
 
     this.state = {
       title: "",
@@ -19,8 +18,11 @@ class NewPost extends Component {
       coords: null,
       location: null,
       isSearchingForLocation: true,
-      isLoading: false
+      isLoading: false,
+      previewFiles: []
     };
+
+    this.files = [];
 
   }
 
@@ -91,6 +93,51 @@ class NewPost extends Component {
     }
   }
 
+  handleImageUpload = async (event) => {
+    event.preventDefault();
+    const files = event.target.files;
+    const savedFiles = this.files;
+    if(files.length > 3) {
+      alert('You can only upload a maximum of 3 files.');
+      return;
+    }
+
+    // If theres more savedFiles start from there
+    // if theres more files uploaded start there
+    let writeIndex = Math.max(savedFiles.length, files.length) - 1;
+    let stopIndex = Math.max(savedFiles.length - files.length, 0);
+
+    let fileWrites = [];
+
+    for(writeIndex; writeIndex >= stopIndex; writeIndex--) {
+      this.files[writeIndex] = files[writeIndex];
+      fileWrites.push(this.readFile(this.files[writeIndex], writeIndex));
+    }
+
+    await Promise.all(fileWrites);
+    this.setState({ previewFiles: this.files });
+
+  }
+
+  readFile(file, index) {
+    const reader = new FileReader();
+    
+    reader.readAsDataURL(file);
+
+    return new Promise((resolve, reject) => {
+      reader.onload = (e) => {
+        this.files[index] = e.target.result;
+        resolve();
+      }
+    });
+
+  }
+
+  openUpload = (event) => {
+    event.preventDefault();
+    this.imageInput.click();
+  }
+
   render() {
     return (
       <div className="NewPost">
@@ -137,6 +184,26 @@ class NewPost extends Component {
           </FormControl>
           </FormGroup>
           </Col>
+          <FormGroup>
+            <ControlLabel>Upload Photos (3 maximum)</ControlLabel>
+            <div className="product-images"> 
+              {this.files.length >= 1 && <Image block src={this.state.previewFiles[0]} rounded />}
+              {this.files.length >= 2 && <Image block src={this.state.previewFiles[1]} rounded />}
+              {this.files.length >= 3 && <Image block src={this.state.previewFiles[2]} rounded />}
+              <input 
+              onChange={this.handleImageUpload}
+              className="image-input" 
+              type="file"
+              accept=".jpg, .jpeg, .png"
+              ref={(input) => { this.imageInput = input; }} 
+              multiple />
+              <Button 
+              onClick={this.openUpload}
+              className="add-image">
+              Add
+              </Button>
+            </div>
+          </FormGroup>
           <FormGroup>
             <ControlLabel>Location</ControlLabel>
             <FormControl.Static>
