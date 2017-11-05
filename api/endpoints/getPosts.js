@@ -21,7 +21,7 @@ export async function main(event, context, callback) {
   try {
     const result = await dynamoDbLib.call('query', params);
     let response = [];
-    let keys = ['price', 'domain', 'postId', 'title', 'createdAt'];
+    let keys = ['price', 'domain', 'postId', 'title', 'createdAt', 'images'];
 
     if(result.Items.length > 0) {
       response = await Promise.all(result.Items.map(async result => {

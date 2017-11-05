@@ -67,7 +67,7 @@ export async function invokeApig({
   return results.json();
 }
 
-export async function s3Upload(file) {
+export async function s3Upload(file, name) {
   if (!await authUser()) {
     throw new Error("User is not logged in");
   }
@@ -78,7 +78,7 @@ export async function s3Upload(file) {
     }
   });
   const userId = await getUserId();
-  const filename = `${userId}-${Date.now()}-${file.name}`;
+  const filename = `${userId}-${Date.now()}-${name ? name : file.name}`;
 
   return s3
     .upload({

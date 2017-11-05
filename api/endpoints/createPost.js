@@ -20,7 +20,8 @@ export async function main(event, context, callback) {
           description: { S: data.description },
           domain: { S: data.domain },
           price: { N: data.price.toString() },
-          createdAt: { N: new Date().getTime().toString() }
+          createdAt: { N: new Date().getTime().toString() },
+          images: {S: data.images}
         }
       }
     }

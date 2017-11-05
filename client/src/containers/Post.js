@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Col, PageHeader, Button, ListGroup, ListGroupItem } from 'react-bootstrap';
+import { Col, PageHeader, Button, ListGroup, ListGroupItem, Image } from 'react-bootstrap';
+import Lightbox from 'react-images';
 import StarRating from '../components/StarRating';
 import { reverseGeocode } from '../libs/geo-parser';
 import { invokeApig } from '../libs/aws-lib';
@@ -17,7 +18,9 @@ class Post extends Component {
       post: {},
       purchases: [],
       isLoading: true,
-      showModal: false
+      showModal: false,
+      viewImages: false,
+      activeImage: 0
     };
   }
 
@@ -124,7 +127,29 @@ class Post extends Component {
     });
   }
 
+  showViewer = (index) => {
+    this.setState({ viewImages: true, activeImage: index });
+  }
+
+  hideViewer = () => {
+    this.setState({ viewImages: false});
+  }
+
+  goToNext = () => {
+    this.setState({ activeImage: this.state.activeImage + 1 });
+  }
+
+  goToPrev = () => {
+    this.setState({ activeImage: this.state.activeImage - 1 });
+  }
+
   render() {
+    let images = [];
+    if(this.state.post && this.state.post.images) {
+      images = this.state.post.images.split(",").map((image, index) => {
+        return { src: image, alt: `image-${index}`}
+      });
+    }
     return ( !this.state.isLoading &&
       <div className="Post">
         <PostInfo {...this.state.post } />
@@ -138,7 +163,27 @@ class Post extends Component {
           closeModal={this.hideEmailModal}
           sendEmail={this.sendEmail}
           title={`Send an email to ${this.state.post.user.name}`}
-        />
+          />
+        {this.state.post.images &&
+        <Col xs={12}>
+          <PageHeader>Product Images</PageHeader>
+          {images.map((image, index) => 
+            <Image 
+              key={image.alt}
+              className="product-image" 
+              src={image.src} 
+              onClick={this.showViewer.bind(null, index)} 
+              rounded />
+            )}
+          <Lightbox 
+            images={images}
+            isOpen={this.state.viewImages}
+            onClose={this.hideViewer}
+            onClickNext={this.goToNext}
+            onClickPrev={this.goToPrev}
+            currentImage={this.state.activeImage}
+          />
+        </Col>}
         {this.props.isCurrentUser(this.state.post.user) &&
         <PreviousPurchases 
           handleRating={this.handleRating} 

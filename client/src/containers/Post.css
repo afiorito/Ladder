@@ -23,6 +23,30 @@
   margin: 4px;
 }
 
+.Post .user-info img {
+  width: 150px;
+  height: 150px;
+}
+
+.Post .product-image {
+  width: 200px;
+  height: 200px;
+  margin-right: 8px;
+  margin-bottom: 16px;
+}
+
+@media(max-width: 600px) {
+  .Post .product-image {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+.Post .carousel img {
+  text-align: center;
+  margin: 0 auto;
+}
+
 .Post .post-info .title h1, .Post .post-info .title {
   margin-top: 0px;
 }
