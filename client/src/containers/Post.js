@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { Col, PageHeader, Button } from 'react-bootstrap';
+import { Col, PageHeader, Button, ListGroup, ListGroupItem } from 'react-bootstrap';
 import StarRating from '../components/StarRating';
 import { reverseGeocode } from '../libs/geo-parser';
 import { invokeApig } from '../libs/aws-lib';
 import { formatPrice } from '../helpers/price-helper';
 import EmailModal from '../components/EmailModal';
+import StripeCheckout from 'react-stripe-checkout';
+import config from '../config';
 import './Post.css';
 
 class Post extends Component {
@@ -13,18 +15,28 @@ class Post extends Component {
 
     this.state = {
       post: {},
+      purchases: [],
       isLoading: true,
       showModal: false
     };
   }
 
   async componentDidMount() {
-    let post = await this.getPost(this.props.match.params);
+    let requests = [
+      this.getPost(this.props.match.params)
+    ];
+    if(this.props.isCurrentUser(this.props.match.params.userId)) {
+      requests.push(
+        this.getPurchases(this.props.user.userId, this.props.match.params.postId)
+      );
+    }
+    let [ post, purchases ] = await Promise.all(requests);
+
     if (post.title) {
       post.geoJson = JSON.parse(post.geoJson);
       const coords = {latitude: post.geoJson.coordinates[1], longitude: post.geoJson.coordinates[0]};
       post.location = await reverseGeocode(coords);
-      this.setState({ post, isLoading: false });
+      this.setState({ post, purchases, isLoading: false });
     } else {
       // TODO: show post not found instead of this
       this.props.history.push('/post');
@@ -37,9 +49,7 @@ class Post extends Component {
     //   geoJson: {type: "POINT", coordinates: [-73.5785649,45.4969574]},
     //   user: {
     //     profileImage: '/assets/profile-avatar.svg',
-    //     name: 'Anthony Fiorito',
-    //     totalRating: 10,
-    //     ratingCount: 3
+    //     name: 'Anthony Fiorito'
     //   }
     // }, isLoading: false });
   }
@@ -71,12 +81,56 @@ class Post extends Component {
     });
   }
 
+  getPurchases(customerId, postId) {
+    console.log(customerId, postId);
+    return invokeApig({
+      path: `/purchases/${customerId}/${postId}`
+    });
+  }
+
+  handleToken = async (token) => {
+    try {
+      const purchase = await invokeApig({
+        path: '/stripe/pay',
+        method: 'POST',
+        body: {
+          token: token.id,
+          customer: this.props.user,
+          user: this.state.post.user,
+          price: this.state.post.price,
+          postId: this.state.post.postId
+        }
+      });
+      console.log(purchase);
+      this.setState({ purchases: this.state.purchases.concat([purchase]) });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  handleRating = async (index, rating) => {
+    let result = await this.updateRating(rating, this.state.purchases[index].purchaseId);
+    console.log(result);
+  }
+
+  updateRating(rating, purchaseId) {
+    return invokeApig({
+      path: `/rating/${purchaseId}`,
+      method: 'PUT',
+      body: {
+        rating: rating,
+        userId: this.state.post.user.userId
+      }
+    });
+  }
+
   render() {
     return ( !this.state.isLoading &&
       <div className="Post">
-        <UserInfo {...this.state.post } />
-        <PostInfo {...this.state.post } 
+        <PostInfo {...this.state.post } />
+        <UserInfo {...this.state.post } 
           isCurrentUser={this.props.isCurrentUser} 
+          handleToken={this.handleToken}
           showEmailModal={this.showEmailModal}
         />
         <EmailModal 
@@ -85,6 +139,11 @@ class Post extends Component {
           sendEmail={this.sendEmail}
           title={`Send an email to ${this.state.post.user.name}`}
         />
+        {this.props.isCurrentUser(this.state.post.user) &&
+        <PreviousPurchases 
+          handleRating={this.handleRating} 
+          purchases={this.state.purchases} 
+        />}
       </div>
     );
   }
@@ -93,7 +152,7 @@ class Post extends Component {
 export default Post;
 
 
-const UserInfo = ({ title, location, description, domain, price, geoJson }) => (
+const PostInfo = ({ title, location, description, domain, price, geoJson }) => (
   <Col md={8} xs={12} className="post-info col-md-push-4">
     <h2>TITLE</h2>
     <PageHeader className="title">{title}</PageHeader>
@@ -108,15 +167,15 @@ const UserInfo = ({ title, location, description, domain, price, geoJson }) => (
   </Col>
 );
 
-const PostInfo = ({ user, price , ...props}) => (
-  <Col md={4} xs={12} className="user-info col-md-pull-8">
+const UserInfo = ({ user, price , handleToken, ...props}) => (
+  <Col md={4} xs={12} className="user-info  col-md-pull-8">
     <img src={user.profileImage || '/assets/profile-avatar.svg'} alt="Profile Avatar" />
     <h3>{user.name}</h3>
     <StarRating
       count={5}
       color1="#333"
       size={24}
-      value={user.totalRating / user.ratingCount}
+      value={user.rating}
       edit={false}
     />
     { props.isCurrentUser(user) &&
@@ -125,13 +184,32 @@ const PostInfo = ({ user, price , ...props}) => (
           bsStyle="info"
           onClick={props.showEmailModal}
         >
-          Email
+          Message
         </Button>
-        <Button
-          bsStyle="success"
-        >
-          Pay for Service
-        </Button>
+        <StripeCheckout image="/favicon.ico" token={handleToken} stripeKey={config.stripe.publishable_test_key}>
+          <Button bsStyle="success">Pay for Service</Button>
+        </StripeCheckout>
       </div> }
+  </Col>
+);
+
+const PreviousPurchases = ({ purchases, handleRating }) => (
+  <Col xs={12} className="previous-purchase">
+    <PageHeader>Previous Purchases</PageHeader>
+    {purchases.length > 0 ?
+      <ListGroup>
+        {purchases.map((p, i) => 
+          <ListGroupItem key={p.purchaseId}>
+            {new Date(p.createdAt).toDateString()}
+            <StarRating 
+              count={5}
+              color1="#333"
+              size={16}
+              value={p.rating}
+              onChange={handleRating.bind(null, i)}
+            />
+          </ListGroupItem>
+        )}
+      </ListGroup> : <div className="center">You have no previous purchases</div> }
   </Col>
 );

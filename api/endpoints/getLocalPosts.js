@@ -20,17 +20,11 @@ export async function main(event, context, callback) {
     let response = await Promise.all(results.map(async item => {
       let formatedItem = marshaler.unmarshalItem(item);
 
-      let user = await dynamoDbLib.call('get', {
-        TableName: 'users',
-        Key: {
-          userId: formatedItem.userId
-        }
-      });
+      let user = await dynamoDbLib.getUserWithRatings(formatedItem.userId);
 
       formatedItem.user = {
-        userId: user.Item.userId, 
-        totalRating: user.Item.totalRating, 
-        ratingCount: user.Item.ratingCount
+        userId: user.Item.userId,
+        rating: user.Item.rating
       };
 
       return pick(formatedItem, ...keys);

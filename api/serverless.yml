@@ -57,6 +57,14 @@ functions:
           method: put
           cors: true
           authorizer: aws_iam
+  updateRating:
+    handler: endpoints/updateRating.main
+    events:
+      - http:
+          path: rating/{purchaseId}
+          method: put
+          cors: true
+          authorizer: aws_iam
   createPost:
     handler: endpoints/createPost.main
     events:
@@ -86,6 +94,14 @@ functions:
           method: get
           cors: true
           authorizer: aws_iam
+  getPurchases:
+    handler: endpoints/getPurchases.main
+    events:
+      - http:
+          path: purchases/{customerId}/{postId}
+          method: get
+          cors: true
+          authorizer: aws_iam
   sendEmail:
     handler: endpoints/sendEmail.main
     events:
@@ -102,3 +118,12 @@ functions:
           method: put
           cors: true
           authorizer: aws_iam
+  stripePayment:
+    handler: endpoints/stripePayment.main
+    events:
+      - http:
+          path: stripe/pay
+          method: post
+          cors: true
+          authorizer: aws_iam
+

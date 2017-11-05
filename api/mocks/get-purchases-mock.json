@@ -1,6 +1,6 @@
 {
   "pathParameters": {
-    "userId": "user1",
+    "customerId": "user1",
     "postId": "749c2b50-d691-4344-9f17-4be52e516bb9"
   }
 }

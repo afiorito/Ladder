@@ -35,9 +35,7 @@ class LocalPosts extends Component {
     //     domain: "Photography", 
     //     price: 5.99,
     //     user: {
-    //       userId: "USERID",
-    //       totalRating: 10,
-    //       ratingCount: 2
+    //       userId: "USERID"
     //     }
     //   }
     // ]});

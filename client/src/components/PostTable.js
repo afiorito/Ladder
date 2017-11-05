@@ -20,7 +20,7 @@ class PostTable extends Component {
           count={5}
           color1="#333"
           size={16}
-          value={post.user.totalRating / post.user.ratingCount}
+          value={post.user.rating}
           edit={false}
         />;
       default: 

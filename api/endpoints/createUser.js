@@ -10,8 +10,6 @@ export async function main(event, context, callback) {
       userId: data.userId,
       name: data.name,
       email: data.email,
-      totalRating: 0,
-      ratingCount: 0,
       createdAt: new Date().getTime()
     },
   };

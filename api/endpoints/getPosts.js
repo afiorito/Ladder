@@ -3,7 +3,7 @@ import { success, failure } from '../helpers/response-helper';
 import { pick, orderBy } from 'lodash';
 
 export async function main(event, context, callback) {
-  let { userId, postId } = event.pathParameters;
+  let { userId, customerId, postId } = event.pathParameters;
   const params = {
     TableName: "posts",
     IndexName: "post-index",
@@ -11,7 +11,7 @@ export async function main(event, context, callback) {
     ExpressionAttributeValues: {
       ":userId": userId,
     }
-  }
+  };
 
   if (postId) {
     params.KeyConditionExpression += " AND postId = :postId"; 
@@ -25,18 +25,15 @@ export async function main(event, context, callback) {
 
     if(result.Items.length > 0) {
       response = await Promise.all(result.Items.map(async result => {
+        // if were searching for a single post
         if (postId) {
           keys = keys.concat(["user", "description", "geoJson"]);
           
-          let user = await dynamoDbLib.call('get', {
-            TableName: 'users',
-            Key: {
-              userId: userId
-            }
-          });
-          result.user = pick(user.Item, ...["userId", "stripeId", "name", "totalRating", "ratingCount", "profileImage"]);
+          let user = await dynamoDbLib.getUserWithRatings(userId);
+          result.user = pick(user.Item, ...["userId", "stripeId", "name", "rating", "rating", "profileImage"]);
 
           return pick(result, keys);
+        // if were searching for multiple posts
         } else {
           return pick(result, keys);
         }

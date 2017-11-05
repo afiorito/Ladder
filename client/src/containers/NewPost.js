@@ -9,6 +9,7 @@ import "./NewPost.css";
 class NewPost extends Component {
   constructor(props) {
     super(props);
+    console.log(props);
 
     this.state = {
       title: "",

@@ -37,13 +37,11 @@ class Profile extends Component {
     //     domain: "Photography", 
     //     price: 5.99,
     //     user: {
-    //       userId: "USERID",
-    //       totalRating: 10,
-    //       ratingCount: 2
+    //       userId: "USERID"
     //     }
     //   }
     // ];
-    // let user = {name: "Anthony", userId, profileImage: null, createdAt: new Date().getTime(), totalRating: 13, ratingCount: 4 };
+    // let user = {name: "Anthony", userId, profileImage: null, createdAt: new Date().getTime()};
 
     this.setState({ user: user, posts: posts});
   }
@@ -112,7 +110,7 @@ class Profile extends Component {
             count={5}
             color1="#333"
             size={24}
-            value={this.state.user.totalRating / this.state.user.ratingCount}
+            value={this.state.user.rating}
             edit={false}
           />
           <LoadingButton

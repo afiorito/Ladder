@@ -1,5 +1,6 @@
 import * as dynamoDbLib from '../helpers/dynamodb-helper';
 import { success, failure } from '../helpers/response-helper';
+import { pick } from 'lodash';
 
 export async function main(event, context, callback) {
   const params = {
@@ -10,17 +11,9 @@ export async function main(event, context, callback) {
   }
 
   try {
-    const result = await dynamoDbLib.call('get', params);
+    const result = await dynamoDbLib.getUserWithRatings(event.pathParameters.id);
     if (result.Item) {
-      callback(null, success({
-        userId: result.Item.userId,
-        name: result.Item.name,
-        totalRating: result.Item.totalRating,
-        ratingCount: result.Item.ratingCount,
-        createdAt: result.Item.createdAt,
-        stripeId: result.Item.stripeId,
-        profileImage: result.Item.profileImage
-      }));
+      callback(null, success(pick(result.Item, ...['userId', 'name', 'createdAt', 'stripeId', 'profileImage', 'rating'])));
     } else {
       callback(null, failure({ status: false, error: 'User not found.' }));
     }

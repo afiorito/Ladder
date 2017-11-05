@@ -1,3 +1,3 @@
 {
-  "body": "{\"userId\":\"USERID\",\"title\":\"Brand New Post\",\"description\":\"This is my post!\",\"domain\":\"Film\",\"price\":\"10.99\",\"coords\":{\"latitude\":45.355674399999995,\"longitude\":-73.25232819999999}}"
+  "body": "{\"userId\":\"user1\",\"title\":\"Brand New Post\",\"description\":\"This is my post!\",\"domain\":\"Film\",\"price\":\"10.99\",\"coords\":{\"latitude\":45.355674399999995,\"longitude\":-73.25232819999999}}"
 }

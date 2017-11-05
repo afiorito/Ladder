@@ -1,0 +1,6 @@
+{
+  "body": "{\"rating\": 5, \"userId\": \"user0\"}",
+  "pathParameters": {
+    "purchaseId": "026265a1-a802-4735-91f3-493b6f847c05"
+  }
+}

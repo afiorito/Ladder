@@ -6,27 +6,29 @@ export async function main(event, context, callback) {
   const data = JSON.parse(event.body);
 
   let { UpdateExpression, ExpressionAttributeValues } = generateUpdateExpression(
-    ["name", "stripeId", "profileImage"],
+    ["rating"],
     data
   );
 
   const params = {
-    TableName: 'users',
+    TableName: 'purchases',
     Key: {
-      userId: event.pathParameters.id
+      purchaseId: event.pathParameters.purchaseId,
+      userId: data.userId
     },
     UpdateExpression: UpdateExpression,
     ExpressionAttributeValues: ExpressionAttributeValues,
+    ConditionExpression: "attribute_exists(purchaseId) AND attribute_exists(userId)",
     ReturnValues: 'ALL_NEW'
   };
 
-  console.log(params);
+console.log(params);
 
   try {
     await dynamoDbLib.call('update', params);
     callback(null, success({status: true}));
   }
   catch(e) {
-    callback(null, failure({status: false}));
+    callback(null, failure({status: e}));
   }
 };

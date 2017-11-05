@@ -21,7 +21,7 @@ export async function main(event, context, callback) {
       callback(null, failure({ status: false}));
     }
     const stripeAuth = JSON.parse(body).stripe_user_id;
-    let { UpdateExpression, ExpressionAttributeValues } = generateUpdateExpression({ stripeId: stripeAuth });
+    let { UpdateExpression, ExpressionAttributeValues } = generateUpdateExpression(["stripeId"], { stripeId: stripeAuth });
     const params = {
       TableName: 'users',
       Key: {

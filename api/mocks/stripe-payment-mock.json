@@ -1,0 +1,3 @@
+{
+  "body": "{\"token\": \"tok_ca\", \"price\": 5.43, \"customer\": { \"userId\": \"user1\" }, \"user\": { \"userId\": \"user0\", \"stripeId\": \"acct_1B5eTvF26h3jtvnl\" }, \"postId\": \"749c2b50-d691-4344-9f17-4be52e516bb9\" }"
+}
