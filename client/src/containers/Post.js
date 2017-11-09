@@ -85,7 +85,6 @@ class Post extends Component {
   }
 
   getPurchases(customerId, postId) {
-    console.log(customerId, postId);
     return invokeApig({
       path: `/purchases/${customerId}/${postId}`
     });
@@ -104,7 +103,6 @@ class Post extends Component {
           postId: this.state.post.postId
         }
       });
-      console.log(purchase);
       this.setState({ purchases: this.state.purchases.concat([purchase]) });
     } catch (e) {
       console.log(e);

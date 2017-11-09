@@ -20,8 +20,6 @@ export async function main(event, context, callback) {
     ReturnValues: 'ALL_NEW'
   };
 
-  console.log(params);
-
   try {
     await dynamoDbLib.call('update', params);
     callback(null, success({status: true}));

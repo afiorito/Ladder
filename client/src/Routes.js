@@ -12,9 +12,9 @@ import Post from './containers/Post';
 import StripeSetup from './containers/StripeSetup';
 import NotFound from "./containers/NotFound";
 
-export default ({ childProps }) =>
+export default ({ childProps, store }) =>
 <Switch>
-  <AppliedRoute path="/" exact component={Home} props={childProps} />
+  <AppliedRoute path="/" exact component={Home} props={childProps} store={store} />
   <UnauthenticatedRoute path="/login" exact component={Login} props={childProps} />
   <UnauthenticatedRoute path="/signup" exact component={Signup} props={childProps} />
   <AuthenticatedRoute path="/profile/:id" exact component={Profile} props={childProps} />

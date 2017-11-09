@@ -11,6 +11,9 @@ class App extends Component {
     super(props);
   
     this.state = {
+      posts: [],
+      location: null,
+      coords: null,
       isAuthenticating: true,
       user: false
     };
@@ -48,11 +51,22 @@ class App extends Component {
     this.props.history.push("/login");
   }
 
+  updateStore = (newState) => {
+    this.setState(newState);
+  }
+
   render() {
     const childProps = {
       user: this.state.user,
       userHasAuthenticated: this.userHasAuthenticated,
       isCurrentUser: this.isCurrentUser
+    };
+
+    const store = {
+      posts: this.state.posts,
+      location: this.state.location,
+      coords: this.state.coords,
+      updateStore: this.updateStore
     };
   
     return (
@@ -87,7 +101,7 @@ class App extends Component {
             </Nav>
           </Navbar.Collapse>
         </Navbar>
-        <Routes childProps={childProps} />
+        <Routes childProps={childProps} store={store} />
       </div>
     );
   }

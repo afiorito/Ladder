@@ -10,8 +10,6 @@ const stripe = stripePackage(config.stripe.secret_test_key);
 export async function main(event, context, callback) {
   const data = JSON.parse(event.body);
 
-  console.log(data);
-
   try {
     const charge = await stripe.charges.create({
       amount: data.price * 100,
@@ -35,12 +33,10 @@ export async function main(event, context, callback) {
       },
     };
 
-    console.log(params);
-
     await dynamoDbLib.call('put', params);
     callback(null, success(pick(params.Item,'createdAt', 'rating', 'purchaseId')));
   }
   catch(e) {
-    callback(null, failure({status: e}));
+    callback(null, failure({status: false}));
   }
 };

@@ -70,7 +70,8 @@ class PostTable extends Component {
       headings,
       responsive,
       striped,
-      onSelectCell 
+      onSelectCell,
+      loadingPosts
     } = this.props;
     return (
       <div>
@@ -84,7 +85,8 @@ class PostTable extends Component {
           {this.renderPosts(posts, headings, onSelectCell)}
         </tbody>
       </Table>
-      {this.props.loadingPosts && <div className="center">Loading...</div>}
+      {loadingPosts && <div className="center">Loading...</div>}
+      {(!loadingPosts && posts.length === 0) && <div className="center">No Local Posts Found.</div>}
       </div>
     ); 
   }

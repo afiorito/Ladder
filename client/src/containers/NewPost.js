@@ -63,19 +63,20 @@ class NewPost extends Component {
     this.setState({ isLoading: true});
 
     try {
-      const savedFiles = this.rawFiles;
+      let fileNames = [];
+      if(this.rawFiles.length > 0) {
+        const savedFiles = this.rawFiles;
 
-      const uploads = [];
-      const regex = /\.(jp(e)?g|png)$/i;
+        const uploads = [];
+        const regex = /\.(jp(e)?g|png)$/i;
 
-      savedFiles.forEach((file, i) => {
-        const filename = `image-${i}${file.name.match(regex)[0]}`;
-        uploads.push(s3Upload(file, filename));
-      });
+        savedFiles.forEach((file, i) => {
+          const filename = `image-${i}${file.name.match(regex)[0]}`;
+          uploads.push(s3Upload(file, filename));
+        });
 
-      const fileNames = (await Promise.all(uploads)).map(u => u.Location);
-
-      console.log("join", fileNames.join(','));
+        fileNames = (await Promise.all(uploads)).map(u => u.Location);
+      }
 
       await this.createPost({
         userId: this.props.user.userId,
@@ -87,7 +88,7 @@ class NewPost extends Component {
         images: fileNames.join(',')
       });
 
-      this.props.history.push("/")
+      this.props.history.goBack();
     } catch (e) {
       alert(e);
       this.setState({isLoading: false});
@@ -113,8 +114,15 @@ class NewPost extends Component {
 
   handleImageUpload = async (event) => {
     event.preventDefault();
-    this.setState({ isLoadingImage: true });
     const file = event.target.files[0];
+
+    console.log(file.type, file.type.match(/(jp(e)?g|png)$/i));
+    if (!file.type) return;
+    if (!file.type.match(/(jp(e)?g|png)$/i)) {
+      alert("File should be an image.");
+      return;
+    }
+    this.setState({ isLoadingImage: true });
     this.files = this.state.previewFiles;
 
     if (this.clickIndex === 'last') 

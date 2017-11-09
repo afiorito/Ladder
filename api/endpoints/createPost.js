@@ -21,7 +21,7 @@ export async function main(event, context, callback) {
           domain: { S: data.domain },
           price: { N: data.price.toString() },
           createdAt: { N: new Date().getTime().toString() },
-          images: {S: data.images}
+          images: data.images === "" ? undefined : {S: data.images}
         }
       }
     }
@@ -30,6 +30,6 @@ export async function main(event, context, callback) {
     callback(null, success({status: true}));
   }
   catch(e) {
-    callback(null, failure({status: false}));
+    callback(null, failure({status: e}));
   }
 };

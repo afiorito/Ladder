@@ -4,7 +4,6 @@ import { pick } from 'lodash';
 
 export async function main(event, context, callback) {
   let { customerId, postId } = event.pathParameters;
-  console.log(event.pathParameters);
   try {
     const purchases = await getPurchasesForCustomerOnPost(customerId, postId);
 

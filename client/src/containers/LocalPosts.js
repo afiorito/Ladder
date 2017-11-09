@@ -10,36 +10,26 @@ class LocalPosts extends Component {
     super(props);
 
     this.state = {
-      posts: [],
-      location: null,
-      coords: null,
-      isSearchingForLocation: true,
+      isSearchingForLocation: false,
       sortASC: false
     };
   }
 
   async componentDidMount() {
     try {
+      if(this.props.posts.length === 0) {
+        this.setState({ isSearchingForLocation: true });
+      }
       const coords = await getCurrentPosition();
       const data = [reverseGeocode(coords), this.getLocalPosts(coords)];
 
-      const [ location, posts ] = await Promise.all(data); 
-      this.setState({ isSearchingForLocation: false, coords, posts, location });
+      const [ location, posts ] = await Promise.all(data);
+      this.props.updateStore({ coords, posts, location });
+      this.setState({ isSearchingForLocation: false });
     } catch (e) {
       alert(e.message);
       this.setState({ isSearchingForLocation: null });
     }
-    // this.setState({ posts: [
-    //   {
-    //     postId: "141232332",
-    //     title: "Offering Wedding Photography", 
-    //     domain: "Photography", 
-    //     price: 5.99,
-    //     user: {
-    //       userId: "USERID"
-    //     }
-    //   }
-    // ]});
   }
 
   getLocalPosts({latitude, longitude}) {
@@ -61,28 +51,35 @@ class LocalPosts extends Component {
   }
 
   sortPosts = (sortBy) => {
-    let sorted = this.state.posts.slice();
+    let sorted = this.props.posts.slice();
     const asc = !this.state.sortASC;
-    
+
+    console.log("sort");
+
     switch (sortBy) {
       case 'Title':
       case 'Domain':
-      case 'Price':
         sorted.sort((a, b) => {
           const key = sortBy.toLowerCase();
-          return asc ? a[key] > b[key] : a[key] < b[key];
+          const mult = asc ? 1 : -1;
+          if(a[key] < b[key]) return -1 * mult;
+          if(a[key] > b[key]) return 1 * mult;
+          return 0;
         });
         break;
+      case 'Price':
       case 'User Rating':
         sorted.sort((a, b) => {
-          return asc ? a.user.rating > b.user.rating : a.user.rating < b.user.rating;
+          const key = sortBy.toLowerCase();
+          return asc ? b[key] - a[key] : a[key] - b[key];
         });
         break;
       default:
         break;
     }
 
-    this.setState({ posts: sorted, sortASC: asc });
+    this.props.updateStore({ posts: sorted });
+    this.setState({ sortASC: asc });
   }
 
   sort(a, b, by) {
@@ -103,12 +100,13 @@ class LocalPosts extends Component {
               Add New Post
             </Button>
           </div>
-          {this.state.coords && <p>{`Near ${this.state.location}`}</p>}
+          {this.props.coords && <p>{`Near ${this.props.location}`}</p>}
         </header>
         <PostTable
-          posts={this.state.posts}
+          posts={this.props.posts}
           headings={["Title", "Domain", "Price", "User Rating"]}
           sortPosts={this.sortPosts}
+          loadingPosts={this.state.isSearchingForLocation}
           striped
           responsive
         />

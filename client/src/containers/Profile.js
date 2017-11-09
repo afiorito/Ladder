@@ -4,7 +4,7 @@ import { invokeApig, s3Upload, s3Delete } from "../libs/aws-lib";
 import LoadingButton from '../components/LoadingButton';
 import ProfileImage from '../components/ProfileImage';
 import PostTable from '../components/PostTable';
-import { Col, ListGroup, ListGroupItem, PageHeader } from 'react-bootstrap';
+import { Col, ListGroup, ListGroupItem, PageHeader, Glyphicon } from 'react-bootstrap';
 import './Profile.css';
 
 class Profile extends Component {
@@ -102,7 +102,7 @@ class Profile extends Component {
 
   render() {
     return (
-      this.state.user && 
+      this.state.user ? 
       <div className="Profile">
         <Col md={4} xs={12} className="profile-header">
           <ProfileImage
@@ -178,7 +178,7 @@ class Profile extends Component {
             )}
           </ListGroup> : <div className="center">You have no purchases</div>}
         </Col>
-      </div>
+      </div> : <Glyphicon glyph="refresh" className="spinning center" />
     );
   }
 }

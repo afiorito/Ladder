@@ -26,7 +26,6 @@ export async function main(event, context, callback) {
     const sales = await dynamoDbLib.call('query', salesParams);
     const purchases = await dynamoDbLib.call('query', purchasesParams);
 
-    console.log(sales, purchases);
     const attributes = ['createdAt', 'price', 'purchaseId', 'rating'];
 
     callback(null, success({
