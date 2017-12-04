@@ -2,11 +2,11 @@ import request from 'request';
 import { success, failure } from '../helpers/response-helper';
 import config from '../config';
 import * as dynamoDbLib from '../helpers/dynamodb-helper';
-import { generateUpdateExpression } from './updateUser';
+import { generateUpdateExpression } from '../helpers/dynamodb-helper';
 
 export async function main(event, context, callback) {
   const data = JSON.parse(event.body);
-
+  
   request.post({
     url: 'https://connect.stripe.com/oauth/token', 
     form: {

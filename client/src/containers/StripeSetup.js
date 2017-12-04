@@ -28,11 +28,13 @@ class StripeSetup extends Component {
         
         this.props.userHasAuthenticated(updatedUser);
       } catch (e) { 
+        console.log(e);
       }
     }
   }
 
   authorize(code, userId) {
+    console.log(code, userId);
     return invokeApig({
       path: `/stripe/${userId}`,
       method: 'PUT',
