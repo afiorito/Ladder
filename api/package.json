@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/a-fiorito/Ladder#readme",
   "devDependencies": {
-    "aws-sdk": "^2.112.0",
+    "aws-sdk": "^2.814.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-runtime": "^6.23.0",
